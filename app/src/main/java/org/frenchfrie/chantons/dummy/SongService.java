@@ -1,5 +1,6 @@
 package org.frenchfrie.chantons.dummy;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -16,43 +17,86 @@ import java.util.Map;
  */
 public class SongService {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static List<Song> ITEMS = new ArrayList<>();
-
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static Map<String, Song> ITEM_MAP = new HashMap<>();
+    private static List<Song> ITEMS = new ArrayList<>();
 
     static {
         // Add 3 sample items.
-        addItem(new Song("1", "Item 1"));
-        addItem(new Song("2", "Item 2"));
-        addItem(new Song("3", "Item 3"));
+        addItem(new Song(1, "chanson 1", "auteur 1", "paroles 1"));
+        addItem(new Song(2, "chanson 2", "auteur 2", "paroles 2"));
+        addItem(new Song(3, "chanson 3", "auteur 3", "paroles 3"));
     }
 
     private static void addItem(Song item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
     }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class Song {
-        public String id;
-        public String content;
+    private final ContentResolver contentResolver;
 
-        public Song(String id, String content) {
-            this.id = id;
-            this.content = content;
+    public SongService(ContentResolver contentResolver) {
+        this.contentResolver = contentResolver;
+    }
+
+    public List<Song> findAll() {
+        return ITEMS;
+    }
+
+    public Song findOne(int id) {
+        Song foundSong = null;
+        for (Song song : ITEMS) {
+            if (id == song.getId()) {
+                foundSong = song;
+                break;
+            }
+        }
+        return foundSong;
+    }
+
+    public static class Song {
+        private int id;
+        private String title;
+        private String author;
+        private String lyrics;
+
+        public Song() {
         }
 
-        @Override
-        public String toString() {
-            return content;
+        public Song(int id, String title, String author, String lyrics) {
+            this.id = id;
+            this.title = title;
+            this.author = author;
+            this.lyrics = lyrics;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public String getLyrics() {
+            return lyrics;
+        }
+
+        public void setLyrics(String lyrics) {
+            this.lyrics = lyrics;
         }
     }
 }

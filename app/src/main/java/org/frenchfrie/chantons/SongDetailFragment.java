@@ -42,24 +42,6 @@ public class SongDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getLoaderManager().initLoader(1, new Bundle(), new LoaderManager.LoaderCallbacks<Object>() {
-            @Override
-            public Loader<Object> onCreateLoader(int id, Bundle args) {
-                new CursorLoader(SongDetailFragment.this);
-                return null;
-            }
-
-            @Override
-            public void onLoadFinished(Loader<Object> loader, Object data) {
-
-            }
-
-            @Override
-            public void onLoaderReset(Loader<Object> loader) {
-
-            }
-        });
-
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader

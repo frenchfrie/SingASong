@@ -34,6 +34,7 @@ public class SongListActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_list);
+        getContentResolver();
 
         if (findViewById(R.id.song_detail_container) != null) {
             // The detail container view will be present only in the

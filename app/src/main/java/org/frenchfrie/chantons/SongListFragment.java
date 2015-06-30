@@ -1,6 +1,7 @@
 package org.frenchfrie.chantons;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -26,6 +27,8 @@ public class SongListFragment extends ListFragment {
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+
+    private SongService songService;
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -72,11 +75,11 @@ public class SongListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<SongService.Song>(
+        setListAdapter(new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                SongService.ITEMS));
+                songService.findAll()));
     }
 
     @Override
@@ -93,7 +96,7 @@ public class SongListFragment extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        songService = new SongService(activity.getContentResolver());
         // Activities containing this fragment must implement its callbacks.
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
