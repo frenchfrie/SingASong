@@ -1,4 +1,4 @@
-package org.frenchfrie.chantons.song;
+package org.frenchfrie.chantons.songs;
 
 import android.database.Cursor;
 

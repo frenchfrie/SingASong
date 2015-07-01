@@ -41,8 +41,8 @@ public class SongDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(SongDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(SongDetailFragment.ARG_ITEM_ID));
+            arguments.putInt(SongDetailFragment.ARG_ITEM_ID,
+                    getIntent().getIntExtra(SongDetailFragment.ARG_ITEM_ID, -1));
             SongDetailFragment fragment = new SongDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

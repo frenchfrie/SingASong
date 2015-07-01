@@ -8,7 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-import org.frenchfrie.chantons.song.SongService;
+import org.frenchfrie.chantons.songs.Song;
+import org.frenchfrie.chantons.songs.SongDAO;
+
+import java.util.List;
 
 /**
  * A list fragment representing a list of Songs. This fragment
@@ -27,7 +30,9 @@ public class SongListFragment extends ListFragment {
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    private SongService songService;
+    private SongDAO songDAO;
+
+    private List<Song> songsDisplayed;
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -49,7 +54,7 @@ public class SongListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(int id);
     }
 
     /**
@@ -58,7 +63,7 @@ public class SongListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(int id) {
         }
     };
 
@@ -72,13 +77,13 @@ public class SongListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        songsDisplayed = songDAO.findAll();
         // TODO: replace with a real list adapter.
         setListAdapter(new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                songService.findAll()));
+                songsDisplayed));
     }
 
     @Override
@@ -95,7 +100,7 @@ public class SongListFragment extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        songService = new SongService(activity.getContentResolver());
+        songDAO = new SongDAO(activity);
         // Activities containing this fragment must implement its callbacks.
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
@@ -118,7 +123,7 @@ public class SongListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(SongService.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(songsDisplayed.get(position).getId());
     }
 
     @Override

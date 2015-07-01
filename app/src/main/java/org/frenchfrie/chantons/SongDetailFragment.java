@@ -1,5 +1,6 @@
 package org.frenchfrie.chantons;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import org.frenchfrie.chantons.song.Song;
-import org.frenchfrie.chantons.song.SongService;
+import org.frenchfrie.chantons.songs.Song;
+import org.frenchfrie.chantons.songs.SongDAO;
 
 /**
  * A fragment representing a single Song detail screen.
@@ -27,7 +28,8 @@ public class SongDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private Song mItem;
+    private Song representedSong;
+    private SongDAO songDAO;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,7 +46,7 @@ public class SongDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = SongService.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            representedSong = songDAO.findOne(getArguments().getInt(ARG_ITEM_ID));
         }
     }
 
@@ -54,10 +56,16 @@ public class SongDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_song_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.song_detail)).setText(mItem.content);
+        if (representedSong != null) {
+            ((TextView) rootView.findViewById(R.id.song_detail)).setText(representedSong.getLyrics());
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        songDAO = new SongDAO(activity);
     }
 }

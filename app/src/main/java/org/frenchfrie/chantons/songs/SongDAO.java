@@ -1,8 +1,8 @@
-package org.frenchfrie.chantons.song;
+package org.frenchfrie.chantons.songs;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -27,21 +27,30 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
                     + SONG_COLUMN_TITLE + " TEXT, "
                     + SONG_COLUMN_AUTHOR_NAME + " TEXT, "
                     + SONG_COLUMN_LYRICS + " TEXT);";
+    public static final String DATABASE_NAME = "main_db";
 
     private SongRowMapper songRowMapper = new SongRowMapper();
 
 
-    public SongDAO(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public SongDAO(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public SongDAO(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
+    private static List<Song> dummies = new ArrayList<>();
+
+    static {
+        dummies.add(new Song("chanson 1", "auteur 1", "paroles 1"));
+        dummies.add(new Song("chanson 2", "auteur 2", "paroles 2"));
+        dummies.add(new Song("chanson 3", "auteur 3", "paroles 3"));
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SONGS_TABLE_CREATE);
+        for (Song dummy : dummies) {
+            save(dummy);
+        }
     }
 
     @Override
@@ -50,12 +59,42 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
     }
 
     @Override
-    public <S extends Song> S save(S entity) {
-        return null;
+    public Song save(Song songToSave) {
+        Integer entityId = songToSave.getId();
+        Song savedSong;
+        ContentValues values = new ContentValues();
+        values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
+        values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
+        values.put(SONG_COLUMN_LYRICS, songToSave.getLyrics());
+        if (entityId == null) {
+            long insertedRowId = getWritableDatabase().insert(SONGS_TABLE_CREATE, null, values);
+            savedSong = findOne((int) insertedRowId);
+        } else {
+            getWritableDatabase().update(SONGS_TABLE_CREATE, values, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
+            savedSong = songToSave;
+        }
+        return savedSong;
+    }
+
+    private Song save(Song songToSave, SQLiteDatabase db) {
+        Integer entityId = songToSave.getId();
+        Song savedSong;
+        ContentValues values = new ContentValues();
+        values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
+        values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
+        values.put(SONG_COLUMN_LYRICS, songToSave.getLyrics());
+        if (entityId == null) {
+            long insertedRowId = db.insert(SONGS_TABLE_CREATE, null, values);
+            savedSong = findOne((int) insertedRowId);
+        } else {
+            db.update(SONGS_TABLE_CREATE, values, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
+            savedSong = songToSave;
+        }
+        return savedSong;
     }
 
     @Override
-    public <S extends Song> Iterable<S> save(Iterable<S> entities) {
+    public <S extends Song> List<S> save(Iterable<S> entities) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -78,7 +117,8 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
     }
 
     @Override
-    public Iterable<Song> findAll() {
+    public List<Song> findAll() {
+//        return dummies;
         Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, null, null, null, null, null);
         List<Song> songs = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -89,7 +129,7 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
     }
 
     @Override
-    public Iterable<Song> findAll(Iterable<Integer> integers) {
+    public List<Song> findAll(Iterable<Integer> integers) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

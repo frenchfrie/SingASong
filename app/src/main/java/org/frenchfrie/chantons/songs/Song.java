@@ -1,7 +1,7 @@
-package org.frenchfrie.chantons.song;
+package org.frenchfrie.chantons.songs;
 
 public class Song {
-    private int id;
+    private Integer id;
     private String title;
     private String author;
     private String lyrics;
@@ -9,18 +9,17 @@ public class Song {
     public Song() {
     }
 
-    public Song(int id, String title, String author, String lyrics) {
-        this.id = id;
+    public Song(String title, String author, String lyrics) {
         this.title = title;
         this.author = author;
         this.lyrics = lyrics;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
