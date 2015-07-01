@@ -1,17 +1,15 @@
 package org.frenchfrie.chantons;
 
-import android.content.CursorLoader;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import org.frenchfrie.chantons.dummy.SongService;
+import org.frenchfrie.chantons.song.Song;
+import org.frenchfrie.chantons.song.SongService;
 
 /**
  * A fragment representing a single Song detail screen.
@@ -29,7 +27,7 @@ public class SongDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private SongService.Song mItem;
+    private Song mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

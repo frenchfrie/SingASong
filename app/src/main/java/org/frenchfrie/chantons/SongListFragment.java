@@ -1,7 +1,6 @@
 package org.frenchfrie.chantons;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-import org.frenchfrie.chantons.dummy.SongService;
+import org.frenchfrie.chantons.song.SongService;
 
 /**
  * A list fragment representing a list of Songs. This fragment
