@@ -2,11 +2,14 @@ package org.frenchfrie.chantons;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Fragment;
 
 
 import android.view.MenuItem;
+
+import roboguice.activity.RoboActivity;
 
 
 /**
@@ -18,7 +21,7 @@ import android.view.MenuItem;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link SongDetailFragment}.
  */
-public class SongDetailActivity extends ActionBarActivity {
+public class SongDetailActivity extends RoboActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,8 @@ public class SongDetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_song_detail);
 
         // Show the Up button in the action bar.
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) supportActionBar.setDisplayHomeAsUpEnabled(true);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity

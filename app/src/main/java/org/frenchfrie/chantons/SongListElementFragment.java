@@ -14,8 +14,6 @@ import android.view.ViewGroup;
  * Activities that contain this fragment must implement the
  * {@link SongListElementFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SongListElementFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class SongListElementFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
