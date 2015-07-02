@@ -1,17 +1,24 @@
 package org.frenchfrie.chantons;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.TextView;
 
 import org.frenchfrie.chantons.songs.Song;
 import org.frenchfrie.chantons.songs.SongDAO;
 
 import java.util.List;
+
+import javax.inject.Inject;
+
+import roboguice.event.EventManager;
+import roboguice.fragment.RoboListFragment;
 
 /**
  * A list fragment representing a list of Songs. This fragment
@@ -22,7 +29,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class SongListFragment extends ListFragment {
+public class SongListFragment extends RoboListFragment {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -34,38 +41,13 @@ public class SongListFragment extends ListFragment {
 
     private List<Song> songsDisplayed;
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
+    @Inject
+    private EventManager eventManager;
 
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(int id);
-    }
-
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(int id) {
-        }
-    };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,7 +61,7 @@ public class SongListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         songsDisplayed = songDAO.findAll();
         // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<>(
+        setListAdapter(new SongListAdaptor(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -101,20 +83,11 @@ public class SongListFragment extends ListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         songDAO = new SongDAO(activity);
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        mCallbacks = (Callbacks) activity;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
     }
 
     @Override
@@ -123,7 +96,7 @@ public class SongListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(songsDisplayed.get(position).getId());
+        eventManager.fire(new OnSongSelected(songsDisplayed.get(position).getId()));
     }
 
     @Override
@@ -155,5 +128,45 @@ public class SongListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    private static class SongListAdaptor extends ArrayAdapter<Song> {
+
+        private Context context;
+        private LayoutInflater mInflater;
+
+        public SongListAdaptor(Context context, int resource, int textViewResourceId, List<Song> objects) {
+            super(context, resource, textViewResourceId, objects);
+            this.context = context;
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+
+            if (convertView == null) {
+                view = mInflater.inflate(R.layout.fragment_song_list_element, parent, false);
+            } else {
+                view = convertView;
+            }
+
+            TextView titleText = (TextView) view.findViewById(R.id.line_one);
+            TextView authorText = (TextView) view.findViewById(R.id.line_two);
+
+            Song song = getItem(position);
+            authorText.setText(song.getAuthor());
+            titleText.setText(song.getTitle());
+
+            return view;
+        }
+    }
+
+    public static class OnSongSelected {
+        public final int songId;
+
+        public OnSongSelected(int songId) {
+            this.songId = songId;
+        }
     }
 }

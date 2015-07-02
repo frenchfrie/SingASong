@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Chantons</string>
     <string name="title_song_detail">Song Detail</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">artist</string>
 </resources>
