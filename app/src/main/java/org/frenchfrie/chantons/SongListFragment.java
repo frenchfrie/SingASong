@@ -2,7 +2,10 @@ package org.frenchfrie.chantons;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +18,15 @@ import org.frenchfrie.chantons.songs.SongDAO;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import roboguice.event.EventManager;
-import roboguice.fragment.RoboListFragment;
-
 /**
  * A list fragment representing a list of Songs. This fragment
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link SongDetailFragment}.
  */
-public class SongListFragment extends RoboListFragment {
+public class SongListFragment extends ListFragment {
+
+    private static final String LOG_TAG = "SongListFragment";
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -38,13 +38,12 @@ public class SongListFragment extends RoboListFragment {
 
     private List<Song> songsDisplayed;
 
-    @Inject
-    private EventManager eventManager;
-
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private Context context;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,12 +78,14 @@ public class SongListFragment extends RoboListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        context = activity;
         songDAO = new SongDAO(activity);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        context = null;
     }
 
     @Override
@@ -93,7 +94,8 @@ public class SongListFragment extends RoboListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        eventManager.fire(new OnSongSelected(songsDisplayed.get(position).getId()));
+//        eventManager.fire(new OnSongSelected(songsDisplayed.get(position).getId()));
+        itemSelected(new OnSongSelected(songsDisplayed.get(position).getId()));
     }
 
     @Override
@@ -165,5 +167,13 @@ public class SongListFragment extends RoboListFragment {
         public OnSongSelected(int songId) {
             this.songId = songId;
         }
+    }
+
+    public void itemSelected(SongListFragment.OnSongSelected songSelected) {
+        Log.d(LOG_TAG, "Item selected");
+        int songId = songSelected.songId;
+        Intent detailIntent = new Intent(context, SongDetailActivity.class);
+        detailIntent.putExtra(SongDetailFragment.ARG_ITEM_ID, songId);
+        startActivity(detailIntent);
     }
 }
