@@ -1,15 +1,10 @@
-package org.frenchfrie.chantons;
+package org.frenchfrie.chantons.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.app.Fragment;
 
 
-import android.view.MenuItem;
+import org.frenchfrie.chantons.R;
 
-import roboguice.activity.RoboActivity;
 import roboguice.activity.RoboFragmentActivity;
 
 

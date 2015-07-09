@@ -1,7 +1,7 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/song_list"
-    android:name="org.frenchfrie.chantons.SongListFragment"
+    android:name="org.frenchfrie.chantons.ui.SongListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"

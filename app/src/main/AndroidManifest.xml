@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SongListActivity"
+            android:name=".ui.SongListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,12 +17,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SongDetailActivity"
+            android:name=".ui.SongDetailActivity"
             android:label="@string/title_song_detail"
-            android:parentActivityName=".SongListActivity" >
+            android:parentActivityName=".ui.SongListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SongListActivity" />
+                android:value=".ui.SongListActivity" />
         </activity>
     </application>
 

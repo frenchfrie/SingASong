@@ -1,4 +1,4 @@
-package org.frenchfrie.chantons;
+package org.frenchfrie.chantons.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import org.frenchfrie.chantons.R;
 import org.frenchfrie.chantons.songs.Song;
 import org.frenchfrie.chantons.songs.SongDAO;
 

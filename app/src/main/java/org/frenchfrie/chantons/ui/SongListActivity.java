@@ -1,6 +1,7 @@
-package org.frenchfrie.chantons;
+package org.frenchfrie.chantons.ui;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+
+import org.frenchfrie.chantons.R;
 
 
 /**
@@ -39,11 +42,20 @@ public class SongListActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
+
+        MenuItem importButton = (MenuItem) findViewById(R.id.add_song);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_import_title)
+        .setMessage(R.string.dialog_import_message)
+        .setView(R.layout.dialog_import);
+        AlertDialog importDialog = builder.create();
+        importDialog.show();
         return super.onMenuItemSelected(featureId, item);
     }
 }

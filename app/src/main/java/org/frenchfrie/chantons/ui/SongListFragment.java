@@ -1,4 +1,4 @@
-package org.frenchfrie.chantons;
+package org.frenchfrie.chantons.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.frenchfrie.chantons.R;
 import org.frenchfrie.chantons.songs.Song;
 import org.frenchfrie.chantons.songs.SongDAO;
 

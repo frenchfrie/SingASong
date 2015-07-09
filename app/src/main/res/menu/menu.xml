@@ -3,7 +3,8 @@
     xmlns:singasong="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/add_song"
+        android:orderInCategory="1"
         android:icon="@android:drawable/btn_plus"
         android:title="@string/add_song"
-        singasong:showAsAction="always" />
+        singasong:showAsAction="ifRoom" />
 </menu>
