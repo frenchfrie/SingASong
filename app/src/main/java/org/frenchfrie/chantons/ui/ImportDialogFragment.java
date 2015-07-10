@@ -24,14 +24,11 @@ public class ImportDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_import, null))
-                // Add action buttons
-                .setPositiveButton(R.string.dialog_import_ok, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // sign in the user ...
-                    }
-                })
+        builder.setTitle(R.string.dialog_import_title)
+                .setMessage(R.string.dialog_import_message)
+                .setView(inflater.inflate(R.layout.dialog_import, null))
+                        // Add action buttons
+                .setPositiveButton(R.string.dialog_import_ok, new ImportOnClickListener())
                 .setNegativeButton(R.string.dialog_import_cancel, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getDialog().cancel();
@@ -39,4 +36,11 @@ public class ImportDialogFragment extends DialogFragment {
                 });
         return builder.create();
     }
+
+    private class ImportOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+        }
+    }
+
 }

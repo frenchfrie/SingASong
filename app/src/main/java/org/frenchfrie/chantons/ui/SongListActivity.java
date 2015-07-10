@@ -51,8 +51,10 @@ public class SongListActivity extends FragmentActivity {
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        findViewById(R.layout.dialog_import);
+        ImportDialogFragment dialogFragment = new ImportDialogFragment();
+        dialogFragment.show(getFragmentManager(), "import dialog");
 
+        /*
         builder.setTitle(R.string.dialog_import_title)
                 .setMessage(R.string.dialog_import_message)
                 .setView(R.layout.dialog_import)
@@ -70,6 +72,7 @@ public class SongListActivity extends FragmentActivity {
                 });
         AlertDialog importDialog = builder.create();
         importDialog.show();
+        */
         return super.onMenuItemSelected(featureId, item);
     }
 
