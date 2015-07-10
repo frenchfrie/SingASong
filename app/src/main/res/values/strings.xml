@@ -7,4 +7,7 @@
     <string name="add_song">Add song</string>
     <string name="dialog_import_title">Import songs</string>
     <string name="dialog_import_message">Select the file to import:</string>
+    <string name="dialog_import_cancel">Cancel</string>
+    <string name="dialog_import_ok">Import</string>
+    <string name="dialog_import_hint">File to import</string>
 </resources>
