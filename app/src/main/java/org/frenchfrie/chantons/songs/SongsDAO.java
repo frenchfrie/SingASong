@@ -11,7 +11,7 @@ import org.frenchfrie.sql_support.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, Integer> {
+public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, Integer> {
 
     static final String SONG_COLUMN_KEY = "id";
     static final String SONG_COLUMN_TITLE = "title";
@@ -32,7 +32,7 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
     private SongRowMapper songRowMapper = new SongRowMapper();
 
 
-    public SongDAO(Context context) {
+    public SongsDAO(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -129,7 +129,6 @@ public class SongDAO extends SQLiteOpenHelper implements CrudRepository<Song, In
 
     @Override
     public List<Song> findAll() {
-//        return dummies;
         Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, null, null, null, null, null);
         List<Song> songs = new ArrayList<>();
         while (cursor.moveToNext()) {

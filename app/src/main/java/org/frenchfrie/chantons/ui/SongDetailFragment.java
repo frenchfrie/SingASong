@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import org.frenchfrie.chantons.R;
 import org.frenchfrie.chantons.songs.Song;
-import org.frenchfrie.chantons.songs.SongDAO;
+import org.frenchfrie.chantons.songs.SongsDAO;
+import org.frenchfrie.chantons.songs.SongsService;
 
 /**
  * A fragment representing a single Song detail screen.
@@ -30,7 +31,7 @@ public class SongDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private Song representedSong;
-    private SongDAO songDAO;
+    private SongsService songsService;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -47,7 +48,7 @@ public class SongDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            representedSong = songDAO.findOne(getArguments().getInt(ARG_ITEM_ID));
+            representedSong = songsService.findOne(getArguments().getInt(ARG_ITEM_ID));
         }
     }
 
@@ -67,6 +68,6 @@ public class SongDetailFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        songDAO = new SongDAO(activity);
+        songsService = SongsService.getSongsService(activity);
     }
 }
