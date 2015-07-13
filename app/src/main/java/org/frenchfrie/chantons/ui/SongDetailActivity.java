@@ -1,11 +1,9 @@
 package org.frenchfrie.chantons.ui;
 
 import android.os.Bundle;
-
+import android.support.v4.app.FragmentActivity;
 
 import org.frenchfrie.chantons.R;
-
-import roboguice.activity.RoboFragmentActivity;
 
 
 /**
@@ -17,7 +15,7 @@ import roboguice.activity.RoboFragmentActivity;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link SongDetailFragment}.
  */
-public class SongDetailActivity extends RoboFragmentActivity {
+public class SongDetailActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

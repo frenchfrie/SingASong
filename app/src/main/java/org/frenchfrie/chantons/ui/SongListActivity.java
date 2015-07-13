@@ -3,7 +3,10 @@ package org.frenchfrie.chantons.ui;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import org.frenchfrie.chantons.R;
+import org.frenchfrie.chantons.songs.SongsService;
 
 
 /**
@@ -33,6 +37,8 @@ public class SongListActivity extends FragmentActivity {
 
     private FrameLayout songDetailContainer;
 
+    public static final int REQUEST_CODE = 65436;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,31 +55,28 @@ public class SongListActivity extends FragmentActivity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (item.getItemId() == R.id.add_song) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("file/*");
+            startActivityForResult(intent, REQUEST_CODE);
 
-        ImportDialogFragment dialogFragment = new ImportDialogFragment();
-        dialogFragment.show(getFragmentManager(), "import dialog");
-
-        /*
-        builder.setTitle(R.string.dialog_import_title)
-                .setMessage(R.string.dialog_import_message)
-                .setView(R.layout.dialog_import)
-                .setPositiveButton(R.string.dialog_import_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // imoprt the file
-                    }
-                })
-                .setNegativeButton(R.string.dialog_import_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog importDialog = builder.create();
-        importDialog.show();
-        */
+            ImportDialogFragment importDialogFragment = new ImportDialogFragment();
+            importDialogFragment.show(getFragmentManager(), "Import file");
+        } else if (item.getItemId() == R.id.export_songs) {
+            SongsService songsService = SongsService.getSongsService(this);
+            songsService.exportToFile();
+        }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode < 0) {
+            Uri fileToImportURI = data.getData();
+            SongsService songsService = SongsService.getSongsService(this);
+            songsService.importFile(fileToImportURI);
+        }
     }
 
 }

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import org.frenchfrie.chantons.R;
 import org.frenchfrie.chantons.songs.Song;
-import org.frenchfrie.chantons.songs.SongDAO;
+import org.frenchfrie.chantons.songs.SongsService;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class SongListFragment extends ListFragment {
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    private SongDAO songDAO;
+    private SongsService songsService;
 
     private List<Song> songsDisplayed;
 
@@ -56,7 +56,7 @@ public class SongListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        songsDisplayed = songDAO.findAll();
+        songsDisplayed = songsService.findAll();
         // TODO: replace with a real list adapter.
         setListAdapter(new SongListAdaptor(
                 getActivity(),
@@ -80,7 +80,7 @@ public class SongListFragment extends ListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context = activity;
-        songDAO = new SongDAO(activity);
+        songsService = SongsService.getSongsService(activity);
     }
 
     @Override
