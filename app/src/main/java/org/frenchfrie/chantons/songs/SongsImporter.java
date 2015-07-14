@@ -6,12 +6,15 @@ import android.util.Log;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -25,39 +28,38 @@ public class SongsImporter {
         this.songsDAO = songsDAO;
     }
 
-    public void importSongs(Uri songsFileUri) {
+    @SuppressWarnings("unchecked")
+    public List<Song> importSongs(Uri songsFileUri) throws IOException {
         File songFile = new File(songsFileUri.getPath());
-        Gson gson = new Gson();
-        try {
-            gson.fromJson(new FileReader(songFile), List.class);
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        List<Song> songsRead;
+        try (FileReader reader = new FileReader(songFile)) {
+            Type jsonRootType = new TypeToken<List<SongDTO>>() {
+            }.getType();
+            List<SongDTO> readObjects = new Gson().fromJson(reader, jsonRootType);
+            songsRead = transform(readObjects, new SongDTOToSong());
+        } catch (JsonIOException | JsonSyntaxException jsonEx) {
+            throw new IOException(jsonEx);
         }
+        return songsRead;
     }
 
-    public void exportSongs() {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void exportSongs() throws IOException {
+        Log.d(SongsImporter.class.getName(), "Exporting all songs to file");
         File songFile = new File(Environment.getExternalStorageDirectory(), "songs_export.json");
-        try {
-            if (!songFile.exists()) {
-                songFile.createNewFile();
-            }
-            Gson gson = new Gson();
-            SongToSongDTO converter = new SongToSongDTO();
-            List<SongDTO> songsDtos = transform(songsDAO.findAll(), converter);
-            try (FileWriter fileWriter = new FileWriter(songFile)) {
-                String songsAsJson = gson.toJson(songsDtos, List.class);
-                fileWriter.append(songsAsJson);
-//                gson.toJson(songsDtos, fileWriter);
-                fileWriter.flush();
-            }
-            String storedSongs = Files.toString(songFile, Charset.defaultCharset());
-            Log.d(SongsImporter.class.getName(), storedSongs);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!songFile.exists()) {
+            songFile.createNewFile();
         }
+        SongToSongDTO converter = new SongToSongDTO();
+        List<SongDTO> songsDTOs = transform(songsDAO.findAll(), converter);
+        try (FileWriter fileWriter = new FileWriter(songFile)) {
+            Gson gson = new Gson();
+            gson.toJson(songsDTOs, fileWriter);
+            fileWriter.flush();
+        } catch (JsonIOException jsonEx) {
+            throw new IOException(jsonEx);
+        }
+        Log.d(SongsImporter.class.getName(), "Successfully exported " + songsDTOs.size() + " songs");
     }
-
 
 }

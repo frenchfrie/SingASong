@@ -36,20 +36,9 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private static List<Song> dummies = new ArrayList<>();
-
-    static {
-        for (int i = 1; i <= 16; i++) {
-            dummies.add(new Song("chanson " + i, "auteur " + i, "paroles " + i));
-        }
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SONGS_TABLE_CREATE);
-        for (Song dummy : dummies) {
-            save(dummy, db);
-        }
     }
 
     @Override
@@ -58,21 +47,19 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
     }
 
     @Override
-    public Song save(Song songToSave) {
+    public <S extends Song> S save(S songToSave) {
         Integer entityId = songToSave.getId();
-        Song savedSong;
         ContentValues values = new ContentValues();
         values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
         values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
         values.put(SONG_COLUMN_LYRICS, songToSave.getLyrics());
         if (entityId == null) {
             long insertedRowId = getWritableDatabase().insert(SONGS_TABLE_NAME, null, values);
-            savedSong = findOne((int) insertedRowId);
+            songToSave.setId((int) insertedRowId);
         } else {
             getWritableDatabase().update(SONGS_TABLE_NAME, values, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
-            savedSong = songToSave;
         }
-        return savedSong;
+        return songToSave;
     }
 
     private Song save(Song songToSave, SQLiteDatabase db) {
@@ -94,7 +81,11 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
 
     @Override
     public <S extends Song> List<S> save(Iterable<S> entities) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        List<S> songsSaved = new ArrayList<>();
+        for (S entity : entities) {
+            songsSaved.add(save(entity));
+        }
+        return songsSaved;
     }
 
     @Override

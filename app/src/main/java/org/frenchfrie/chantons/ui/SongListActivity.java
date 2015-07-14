@@ -18,6 +18,8 @@ import android.widget.FrameLayout;
 import org.frenchfrie.chantons.R;
 import org.frenchfrie.chantons.songs.SongsService;
 
+import java.io.IOException;
+
 
 /**
  * An activity representing a list of Songs. This activity
@@ -43,7 +45,6 @@ public class SongListActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song_list);
-        ActionBar actionBar = getActionBar();
     }
 
     @Override
@@ -59,12 +60,15 @@ public class SongListActivity extends FragmentActivity {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("file/*");
             startActivityForResult(intent, REQUEST_CODE);
-
-            ImportDialogFragment importDialogFragment = new ImportDialogFragment();
-            importDialogFragment.show(getFragmentManager(), "Import file");
         } else if (item.getItemId() == R.id.export_songs) {
             SongsService songsService = SongsService.getSongsService(this);
-            songsService.exportToFile();
+            try {
+                songsService.exportToFile();
+            } catch (IOException e) {
+                new AlertDialog.Builder(this)
+                        .setMessage("Error exporting file: " + e.getLocalizedMessage())
+                        .show();
+            }
         }
         return super.onMenuItemSelected(featureId, item);
     }
@@ -75,7 +79,14 @@ public class SongListActivity extends FragmentActivity {
         if (requestCode == REQUEST_CODE && resultCode < 0) {
             Uri fileToImportURI = data.getData();
             SongsService songsService = SongsService.getSongsService(this);
-            songsService.importFile(fileToImportURI);
+            try {
+                songsService.importFile(fileToImportURI);
+                recreate();
+            } catch (IOException e) {
+                new AlertDialog.Builder(this)
+                        .setMessage("Error importing file: " + e.getLocalizedMessage())
+                        .show();
+            }
         }
     }
 

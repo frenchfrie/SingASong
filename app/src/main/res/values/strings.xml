@@ -1,14 +1,8 @@
 <resources>
-    <string name="app_name">Chantons</string>
+    <string name="app_name">Sing a song</string>
     <string name="title_song_detail">Song Detail</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">artist</string>
-    <string name="add_song">Add song</string>
-    <string name="dialog_import_title">Import songs</string>
-    <string name="dialog_import_message">Select the file to import:</string>
-    <string name="dialog_import_cancel">Cancel</string>
-    <string name="dialog_import_ok">Import</string>
-    <string name="dialog_import_hint">File to import</string>
-    <string name="export_song">Export songs</string>
+    <string name="add_song">Import</string>
+    <string name="export_song">Export</string>
 </resources>

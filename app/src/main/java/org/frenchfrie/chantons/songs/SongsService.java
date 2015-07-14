@@ -3,6 +3,7 @@ package org.frenchfrie.chantons.songs;
 import android.content.Context;
 import android.net.Uri;
 
+import java.io.IOException;
 import java.util.List;
 
 public class SongsService {
@@ -34,11 +35,11 @@ public class SongsService {
         return songsDAO.findAll();
     }
 
-    public void importFile(Uri uri) {
-        new SongsImporter(songsDAO).importSongs(uri);
+    public void importFile(Uri uri) throws IOException {
+        songsDAO.save(new SongsImporter(songsDAO).importSongs(uri));
     }
 
-    public void exportToFile() {
+    public void exportToFile() throws IOException {
         new SongsImporter(songsDAO).exportSongs();
     }
 
