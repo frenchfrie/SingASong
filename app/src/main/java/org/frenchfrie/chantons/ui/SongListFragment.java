@@ -37,7 +37,7 @@ public class SongListFragment extends ListFragment {
 
     private SongsService songsService;
 
-    private List<Song> songsDisplayed;
+    private Iterable<Song> songsDisplayed;
 
     /**
      * The current activated item position. Only used on tablets.

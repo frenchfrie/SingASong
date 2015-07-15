@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -15,7 +14,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import static com.google.common.collect.Lists.transform;

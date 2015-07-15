@@ -11,13 +11,25 @@ import org.frenchfrie.sql_support.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, Integer> {
+public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, Long> {
 
     static final String SONG_COLUMN_KEY = "id";
     static final String SONG_COLUMN_TITLE = "title";
-    static final String SONG_COLUMN_LYRICS = "lyrics";
     static final String SONG_COLUMN_AUTHOR_NAME = "author_name";
-    private static final String[] SONG_TABLE_COLUMNS = new String[]{SONG_COLUMN_KEY, SONG_COLUMN_TITLE, SONG_COLUMN_LYRICS, SONG_COLUMN_AUTHOR_NAME};
+    static final String SONG_COLUMN_RAW_LYRICS = "raw_lyrics";
+    static final String SONG_COLUMN_DESCRIPTION = "description";
+    static final String SONG_COLUMN_COUPLETS = "couplets";
+    static final String SONG_COLUMN_CHORUS = "chorus";
+    static final String SONG_COLUMN_RECORDING = "recording";
+    private static final String[] SONG_TABLE_COLUMNS = new String[]{
+            SONG_COLUMN_KEY,
+            SONG_COLUMN_TITLE,
+            SONG_COLUMN_AUTHOR_NAME,
+            SONG_COLUMN_RAW_LYRICS,
+            SONG_COLUMN_COUPLETS,
+            SONG_COLUMN_CHORUS,
+            SONG_COLUMN_RECORDING
+    };
 
     private static final int DATABASE_VERSION = 1;
     private static final String SONGS_TABLE_NAME = "songs";
@@ -26,7 +38,10 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
                     + SONG_COLUMN_KEY + " INTEGER PRIMARY KEY, "
                     + SONG_COLUMN_TITLE + " TEXT, "
                     + SONG_COLUMN_AUTHOR_NAME + " TEXT, "
-                    + SONG_COLUMN_LYRICS + " TEXT);";
+                    + SONG_COLUMN_RAW_LYRICS + " TEXT, "
+                    + SONG_COLUMN_CHORUS + " INTEGER, "
+                    + SONG_COLUMN_COUPLETS + " INTEGER, "
+                    + ");";
     public static final String DATABASE_NAME = "main_db";
 
     private SongRowMapper songRowMapper = new SongRowMapper();
@@ -48,35 +63,18 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
 
     @Override
     public <S extends Song> S save(S songToSave) {
-        Integer entityId = songToSave.getId();
+        Long entityId = songToSave.getId();
         ContentValues values = new ContentValues();
         values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
         values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
-        values.put(SONG_COLUMN_LYRICS, songToSave.getLyrics());
+        values.put(SONG_COLUMN_RAW_LYRICS, songToSave.getRawLyrics());
         if (entityId == null) {
             long insertedRowId = getWritableDatabase().insert(SONGS_TABLE_NAME, null, values);
-            songToSave.setId((int) insertedRowId);
+            songToSave.setId(insertedRowId);
         } else {
-            getWritableDatabase().update(SONGS_TABLE_NAME, values, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
+            getWritableDatabase().update(SONGS_TABLE_NAME, values, SONG_COLUMN_KEY + " = ?", new String[]{Long.toString(entityId)});
         }
         return songToSave;
-    }
-
-    private Song save(Song songToSave, SQLiteDatabase db) {
-        Integer entityId = songToSave.getId();
-        Song savedSong;
-        ContentValues values = new ContentValues();
-        values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
-        values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
-        values.put(SONG_COLUMN_LYRICS, songToSave.getLyrics());
-        if (entityId == null) {
-            long insertedRowId = db.insert(SONGS_TABLE_NAME, null, values);
-            savedSong = findOne((int) insertedRowId, db);
-        } else {
-            db.update(SONGS_TABLE_NAME, values, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
-            savedSong = songToSave;
-        }
-        return savedSong;
     }
 
     @Override
@@ -89,8 +87,8 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
     }
 
     @Override
-    public Song findOne(Integer key) {
-        Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)}, null, null, null);
+    public Song findOne(Long key) {
+        Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, SONG_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
         Song song;
         if (cursor.moveToNext()) {
             song = songRowMapper.mapRow(cursor);
@@ -114,12 +112,12 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
     }
 
     @Override
-    public boolean exists(Integer integer) {
+    public boolean exists(Long integer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public List<Song> findAll() {
+    public Iterable<Song> findAll() {
         Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, null, null, null, null, null);
         List<Song> songs = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -130,7 +128,7 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
     }
 
     @Override
-    public List<Song> findAll(Iterable<Integer> integers) {
+    public Iterable<Song> findAll(Iterable<Long> integers) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -147,8 +145,8 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, I
     }
 
     @Override
-    public void delete(Integer key) {
-        getWritableDatabase().delete(SONGS_TABLE_NAME, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)});
+    public void delete(Long key) {
+        getWritableDatabase().delete(SONGS_TABLE_NAME, SONG_COLUMN_KEY + " = ?", new String[]{Long.toString(key)});
     }
 
     @Override

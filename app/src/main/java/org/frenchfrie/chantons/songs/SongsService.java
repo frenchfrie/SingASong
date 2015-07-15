@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 
 import java.io.IOException;
-import java.util.List;
 
 public class SongsService {
 
@@ -27,11 +26,11 @@ public class SongsService {
         this.songsDAO = songsDAO;
     }
 
-    public Song findOne(Integer key) {
+    public Song findOne(Long key) {
         return songsDAO.findOne(key);
     }
 
-    public List<Song> findAll() {
+    public Iterable<Song> findAll() {
         return songsDAO.findAll();
     }
 
