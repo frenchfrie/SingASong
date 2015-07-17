@@ -48,7 +48,7 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
 
     @Override
     public <S extends Couplet> S save(S coupletToSave) {
-        Integer entityId = coupletToSave.getId();
+        Long entityId = coupletToSave.getId();
         ContentValues values = new ContentValues();
         values.put(COUPLET_COLUMN_TITLE, coupletToSave.getTitle());
         values.put(COUPLET_COLUMN_AUTHOR_NAME, coupletToSave.getAuthor());
@@ -57,13 +57,13 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
             long insertedRowId = getWritableDatabase().insert(COUPLETS_TABLE_NAME, null, values);
             coupletToSave.setId((int) insertedRowId);
         } else {
-            getWritableDatabase().update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
+            getWritableDatabase().update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(entityId)});
         }
         return coupletToSave;
     }
 
     private Couplet save(Couplet coupletToSave, SQLiteDatabase db) {
-        Integer entityId = coupletToSave.getId();
+        Long entityId = coupletToSave.getId();
         Couplet savedCouplet;
         ContentValues values = new ContentValues();
         values.put(COUPLET_COLUMN_TITLE, coupletToSave.getTitle());
@@ -73,7 +73,7 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
             long insertedRowId = db.insert(COUPLETS_TABLE_NAME, null, values);
             savedCouplet = findOne((int) insertedRowId, db);
         } else {
-            db.update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Integer.toString(entityId)});
+            db.update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(entityId)});
             savedCouplet = coupletToSave;
         }
         return savedCouplet;
@@ -89,8 +89,8 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     }
 
     @Override
-    public Couplet findOne(Integer key) {
-        Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)}, null, null, null);
+    public Couplet findOne(Long key) {
+        Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
         Couplet couplet;
         if (cursor.moveToNext()) {
             couplet = coupletRowMapper.mapRow(cursor);
@@ -101,8 +101,8 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
         return couplet;
     }
 
-    private Couplet findOne(Integer key, SQLiteDatabase readableDatabase) {
-        Cursor cursor = readableDatabase.query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)}, null, null, null);
+    private Couplet findOne(Long key, SQLiteDatabase readableDatabase) {
+        Cursor cursor = readableDatabase.query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
         Couplet couplet;
         if (cursor.moveToNext()) {
             couplet = coupletRowMapper.mapRow(cursor);
@@ -114,7 +114,7 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     }
 
     @Override
-    public boolean exists(Integer integer) {
+    public boolean exists(Long integer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -130,7 +130,7 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     }
 
     @Override
-    public List<Couplet> findAll(Iterable<Integer> integers) {
+    public List<Couplet> findAll(Iterable<Long> integers) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -147,8 +147,8 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     }
 
     @Override
-    public void delete(Integer key) {
-        getWritableDatabase().delete(COUPLETS_TABLE_NAME, COUPLET_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)});
+    public void delete(Long key) {
+        getWritableDatabase().delete(COUPLETS_TABLE_NAME, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)});
     }
 
     @Override

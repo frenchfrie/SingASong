@@ -44,11 +44,12 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
                     + ");";
     public static final String DATABASE_NAME = "main_db";
 
-    private SongRowMapper songRowMapper = new SongRowMapper();
+    private SongRowMapper songRowMapper;
 
 
     public SongsDAO(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        songRowMapper = new SongRowMapper(new CoupletsDAO(context));
     }
 
     @Override
