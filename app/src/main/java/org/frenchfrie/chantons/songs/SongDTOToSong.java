@@ -6,6 +6,6 @@ public class SongDTOToSong implements Function<SongDTO, Song> {
 
     @Override
     public Song apply(SongDTO from) {
-        return new Song(from.getTitle(), from.getAuthor(), from.getLyrics());
+        return new Song(from.getTitle(), from.getAuthor(), from.getRawLyrics());
     }
 }

@@ -1,20 +1,23 @@
 package org.frenchfrie.chantons.songs;
 
+import java.util.List;
+
 /**
  * Song object to use for external exchanges as JSon import or export.
  */
 public class SongDTO {
     private String title;
     private String author;
-    private String lyrics;
+    private String rawLyrics;
+    private List<CoupletDTO> couplets;
 
     public SongDTO() {
     }
 
-    public SongDTO(String title, String author, String lyrics) {
+    public SongDTO(String title, String author, String rawLyrics) {
         this.title = title;
         this.author = author;
-        this.lyrics = lyrics;
+        this.rawLyrics = rawLyrics;
     }
 
     public String getTitle() {
@@ -33,11 +36,32 @@ public class SongDTO {
         this.author = author;
     }
 
-    public String getLyrics() {
-        return lyrics;
+    public String getRawLyrics() {
+        return rawLyrics;
     }
 
-    public void setLyrics(String lyrics) {
-        this.lyrics = lyrics;
+    public void setRawLyrics(String rawLyrics) {
+        this.rawLyrics = rawLyrics;
+    }
+
+    public static class CoupletDTO {
+        private String verses;
+        private String image;
+
+        public String getVerses() {
+            return verses;
+        }
+
+        public void setVerses(String verses) {
+            this.verses = verses;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
     }
 }

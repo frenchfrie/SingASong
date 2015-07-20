@@ -6,6 +6,13 @@ import org.frenchfrie.sql_support.RowMapper;
 
 class SongRowMapper implements RowMapper<Song> {
 
+    public static final String SONG_COLUMN_KEY = "id";
+    public static final String SONG_COLUMN_TITLE = "title";
+    public static final String SONG_COLUMN_AUTHOR_NAME = "author_name";
+    public static final String SONG_COLUMN_RAW_LYRICS = "raw_lyrics";
+    public static final String SONG_COLUMN_DESCRIPTION = "description";
+    public static final String SONG_COLUMN_RECORDING = "recording";
+
     private CoupletsDAO coupletsDAO;
 
     public SongRowMapper(CoupletsDAO coupletsDAO) {
@@ -15,13 +22,14 @@ class SongRowMapper implements RowMapper<Song> {
     @Override
     public Song mapRow(Cursor cursor) {
         Song song = new Song();
-        song.setId(cursor.getLong(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_KEY)));
-        song.setTitle(cursor.getString(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_TITLE)));
-        song.setDescription(cursor.getString(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_DESCRIPTION)));
-        song.setAuthor(cursor.getString(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_AUTHOR_NAME)));
-        song.setRawLyrics(cursor.getString(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_RAW_LYRICS)));
-        song.setRecordingFileName(cursor.getString(cursor.getColumnIndex(SongsDAO.SONG_COLUMN_RECORDING)));
-
+        song.setId(cursor.getLong(cursor.getColumnIndex(SONG_COLUMN_KEY)));
+        song.setTitle(cursor.getString(cursor.getColumnIndex(SONG_COLUMN_TITLE)));
+        song.setDescription(cursor.getString(cursor.getColumnIndex(SONG_COLUMN_DESCRIPTION)));
+        song.setAuthor(cursor.getString(cursor.getColumnIndex(SONG_COLUMN_AUTHOR_NAME)));
+        song.setRawLyrics(cursor.getString(cursor.getColumnIndex(SONG_COLUMN_RAW_LYRICS)));
+        song.setRecordingFileName(cursor.getString(cursor.getColumnIndex(SONG_COLUMN_RECORDING)));
+        song.setCouplets(coupletsDAO.findSongCouplets(song.getId()));
+        song.setChorus(coupletsDAO.findSongChorus(song.getId()));
         return song;
     }
 }

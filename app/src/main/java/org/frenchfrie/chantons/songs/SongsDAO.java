@@ -11,55 +11,36 @@ import org.frenchfrie.sql_support.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_AUTHOR_NAME;
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_KEY;
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_RAW_LYRICS;
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_RECORDING;
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_TITLE;
+
 public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, Long> {
 
-    static final String SONG_COLUMN_KEY = "id";
-    static final String SONG_COLUMN_TITLE = "title";
-    static final String SONG_COLUMN_AUTHOR_NAME = "author_name";
-    static final String SONG_COLUMN_RAW_LYRICS = "raw_lyrics";
-    static final String SONG_COLUMN_DESCRIPTION = "description";
-    static final String SONG_COLUMN_COUPLETS = "couplets";
-    static final String SONG_COLUMN_CHORUS = "chorus";
-    static final String SONG_COLUMN_RECORDING = "recording";
+    private static final int DATABASE_VERSION = 1;
+
     private static final String[] SONG_TABLE_COLUMNS = new String[]{
             SONG_COLUMN_KEY,
             SONG_COLUMN_TITLE,
             SONG_COLUMN_AUTHOR_NAME,
             SONG_COLUMN_RAW_LYRICS,
-            SONG_COLUMN_COUPLETS,
-            SONG_COLUMN_CHORUS,
             SONG_COLUMN_RECORDING
     };
 
-    private static final int DATABASE_VERSION = 1;
-    private static final String SONGS_TABLE_NAME = "songs";
+    public static final String SONGS_TABLE_NAME = "songs";
     private static final String SONGS_TABLE_CREATE =
             "CREATE TABLE " + SONGS_TABLE_NAME + " ("
                     + SONG_COLUMN_KEY + " INTEGER PRIMARY KEY, "
                     + SONG_COLUMN_TITLE + " TEXT, "
                     + SONG_COLUMN_AUTHOR_NAME + " TEXT, "
                     + SONG_COLUMN_RAW_LYRICS + " TEXT, "
-                    + SONG_COLUMN_CHORUS + " INTEGER, "
-                    + SONG_COLUMN_COUPLETS + " INTEGER, "
+                    + SONG_COLUMN_RECORDING + " TEXT, "
                     + ");";
     public static final String DATABASE_NAME = "main_db";
 
     private SongRowMapper songRowMapper;
-
-    /**
-     * Table to map songs with their ordered list of couplets.
-     */
-    private static final String COUPLETS_MAPPING_TABLE_NAME = "couplet_mapping_table";
-
-    public static final String MAPPING_TABLE_SONG_ID = "song_id";
-    public static final String MAPPING_TABLE_COUPLET_ID = "couplet_id";
-    public static final String MAPPING_TABLE_COUPLET_ORDER = "couplet_order";
-    public static final String COUPLETS_MAPPING_TABLE_CREATE =
-            "CREATE TABLE " + COUPLETS_MAPPING_TABLE_NAME + " ("
-                    + MAPPING_TABLE_SONG_ID + " INTEGER, "
-                    + MAPPING_TABLE_COUPLET_ID + " INTEGER, "
-                    + MAPPING_TABLE_COUPLET_ORDER + " INTEGER);";
-
 
     public SongsDAO(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -69,7 +50,6 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SONGS_TABLE_CREATE);
-        db.execSQL(COUPLETS_MAPPING_TABLE_CREATE);
     }
 
     @Override
@@ -105,18 +85,6 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
     @Override
     public Song findOne(Long key) {
         Cursor cursor = getReadableDatabase().query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, SONG_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
-        Song song;
-        if (cursor.moveToNext()) {
-            song = songRowMapper.mapRow(cursor);
-        } else {
-            song = null;
-        }
-        cursor.close();
-        return song;
-    }
-
-    private Song findOne(Integer key, SQLiteDatabase readableDatabase) {
-        Cursor cursor = readableDatabase.query(SONGS_TABLE_NAME, SONG_TABLE_COLUMNS, SONG_COLUMN_KEY + " = ?", new String[]{Integer.toString(key)}, null, null, null);
         Song song;
         if (cursor.moveToNext()) {
             song = songRowMapper.mapRow(cursor);

@@ -11,31 +11,34 @@ import org.frenchfrie.sql_support.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.frenchfrie.chantons.songs.CoupletRowMapper.COUPLET_COLUMN_KEY;
+import static org.frenchfrie.chantons.songs.CoupletRowMapper.COUPLET_COLUMN_VERSES;
+import static org.frenchfrie.chantons.songs.SongsDAO.SONGS_TABLE_NAME;
+import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_KEY;
+
 public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Couplet, Long> {
 
-    static final String COUPLET_COLUMN_KEY = "id";
-    static final String COUPLET_POSITION_COLUMN_TITLE = "position";
-    static final String COUPLET_COLUMN_TITLE = "title";
-    static final String COUPLET_COLUMN_LYRICS = "lyrics";
-    static final String COUPLET_COLUMN_AUTHOR_NAME = "author_name";
+    public static final String COUPLET_COLUMN_SONG_KEY = "song_id";
+    public static final String COUPLET_COLUMN_POSITION = "position";
 
-    private static final String[] COUPLET_TABLE_COLUMNS = new String[]{COUPLET_COLUMN_KEY,COUPLET_POSITION_COLUMN_TITLE, COUPLET_COLUMN_TITLE, COUPLET_COLUMN_TITLE};
+    private static final String[] COUPLET_TABLE_COLUMNS = new String[]{COUPLET_COLUMN_KEY, COUPLET_COLUMN_SONG_KEY, COUPLET_COLUMN_POSITION, COUPLET_COLUMN_VERSES};
 
     private static final int DATABASE_VERSION = 1;
     private static final String COUPLETS_TABLE_NAME = "couplets";
     private static final String COUPLETS_TABLE_CREATE =
             "CREATE TABLE " + COUPLETS_TABLE_NAME + " ("
                     + COUPLET_COLUMN_KEY + " INTEGER PRIMARY KEY, "
-                    + COUPLET_COLUMN_TITLE + " TEXT, "
-                    + COUPLET_COLUMN_AUTHOR_NAME + " TEXT, "
-                    + COUPLET_COLUMN_LYRICS + " TEXT);";
-    public static final String DATABASE_NAME = "main_db";
+                    + COUPLET_COLUMN_SONG_KEY + " INTEGER, "
+                    + COUPLET_COLUMN_POSITION + " INTEGER, "
+                    + COUPLET_COLUMN_VERSES + " TEXT, " +
+                    "FOREIGN KEY(" + COUPLET_COLUMN_SONG_KEY + ") REFERENCES " + SONGS_TABLE_NAME + "(" + SONG_COLUMN_KEY + ")" +
+                    ");";
+    public static final String CHORUS_POSITION = "0";
 
     private CoupletRowMapper coupletRowMapper = new CoupletRowMapper();
 
-
     public CoupletsDAO(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, SongsDAO.DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -48,12 +51,12 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
 
     }
 
-    @Override
-    public <S extends Couplet> S save(S coupletToSave) {
+    public <S extends Couplet> S save(S coupletToSave, long songId, Integer position) {
         Long entityId = coupletToSave.getId();
         ContentValues values = new ContentValues();
-        values.put(COUPLET_COLUMN_TITLE, coupletToSave.getImage());
-        values.put(COUPLET_COLUMN_AUTHOR_NAME, VersesDBSerializer.serializeVerses(coupletToSave.getVerses()));
+        coupletRowMapper.fillValues(coupletToSave, values);
+        values.put(COUPLET_COLUMN_SONG_KEY, Long.toString(songId));
+        values.put(COUPLET_COLUMN_POSITION, position == null ? CHORUS_POSITION : Integer.toString(position));
         if (entityId == null) {
             long insertedRowId = getWritableDatabase().insert(COUPLETS_TABLE_NAME, null, values);
             coupletToSave.setId(insertedRowId);
@@ -64,17 +67,32 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     }
 
     @Override
+    public <S extends Couplet> S save(S entity) {
+        throw new UnsupportedOperationException("Not to be implemented.");
+    }
+
+    @Override
     public <S extends Couplet> List<S> save(Iterable<S> entities) {
-        List<S> coupletsSaved = new ArrayList<>();
-        for (S entity : entities) {
-            coupletsSaved.add(save(entity));
-        }
-        return coupletsSaved;
+        throw new UnsupportedOperationException("Cannot save with several song ids and positions");
     }
 
     @Override
     public Couplet findOne(Long key) {
         Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
+        Couplet couplet;
+        if (cursor.moveToNext()) {
+            couplet = coupletRowMapper.mapRow(cursor);
+        } else {
+            couplet = null;
+        }
+        cursor.close();
+        return couplet;
+    }
+
+    public Couplet findSongChorus(Long songId) {
+        Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS,
+                COUPLET_COLUMN_SONG_KEY + " = ? AND " + COUPLET_COLUMN_POSITION + " = " + CHORUS_POSITION,
+                new String[]{Long.toString(songId)}, null, null, null);
         Couplet couplet;
         if (cursor.moveToNext()) {
             couplet = coupletRowMapper.mapRow(cursor);
@@ -136,5 +154,17 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     @Override
     public void deleteAll() {
         getWritableDatabase().delete(COUPLETS_TABLE_NAME, null, null);
+    }
+
+    public List<Couplet> findSongCouplets(Long songId) {
+        Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS,
+                COUPLET_COLUMN_SONG_KEY + " = ? AND " + COUPLET_COLUMN_POSITION + " <> " + CHORUS_POSITION,
+                new String[]{Long.toString(songId)}, null, null, COUPLET_COLUMN_POSITION + " ASC");
+        List<Couplet> couplets = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            couplets.add(coupletRowMapper.mapRow(cursor));
+        }
+        cursor.close();
+        return couplets;
     }
 }

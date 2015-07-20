@@ -1,12 +1,13 @@
 package org.frenchfrie.chantons.songs;
 
-import java.util.List;
-
 class Couplet {
 
     private Long id;
 
-    private List<String> verses;
+    /**
+     * Verses: a line feed is the verse delimiter.
+     */
+    private String verses;
 
     private String image;
 
@@ -18,11 +19,11 @@ class Couplet {
         this.id = id;
     }
 
-    public List<String> getVerses() {
+    public String getVerses() {
         return verses;
     }
 
-    public void setVerses(List<String> verses) {
+    public void setVerses(String verses) {
         this.verses = verses;
     }
 
