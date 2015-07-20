@@ -46,6 +46,20 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
 
     private SongRowMapper songRowMapper;
 
+    /**
+     * Table to map songs with their ordered list of couplets.
+     */
+    private static final String COUPLETS_MAPPING_TABLE_NAME = "couplet_mapping_table";
+
+    public static final String MAPPING_TABLE_SONG_ID = "song_id";
+    public static final String MAPPING_TABLE_COUPLET_ID = "couplet_id";
+    public static final String MAPPING_TABLE_COUPLET_ORDER = "couplet_order";
+    public static final String COUPLETS_MAPPING_TABLE_CREATE =
+            "CREATE TABLE " + COUPLETS_MAPPING_TABLE_NAME + " ("
+                    + MAPPING_TABLE_SONG_ID + " INTEGER, "
+                    + MAPPING_TABLE_COUPLET_ID + " INTEGER, "
+                    + MAPPING_TABLE_COUPLET_ORDER + " INTEGER);";
+
 
     public SongsDAO(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -55,6 +69,7 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SONGS_TABLE_CREATE);
+        db.execSQL(COUPLETS_MAPPING_TABLE_CREATE);
     }
 
     @Override

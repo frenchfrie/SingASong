@@ -14,10 +14,12 @@ import java.util.List;
 public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Couplet, Long> {
 
     static final String COUPLET_COLUMN_KEY = "id";
+    static final String COUPLET_POSITION_COLUMN_TITLE = "position";
     static final String COUPLET_COLUMN_TITLE = "title";
     static final String COUPLET_COLUMN_LYRICS = "lyrics";
     static final String COUPLET_COLUMN_AUTHOR_NAME = "author_name";
-    private static final String[] COUPLET_TABLE_COLUMNS = new String[]{COUPLET_COLUMN_KEY, COUPLET_COLUMN_TITLE, COUPLET_COLUMN_LYRICS, COUPLET_COLUMN_AUTHOR_NAME};
+
+    private static final String[] COUPLET_TABLE_COLUMNS = new String[]{COUPLET_COLUMN_KEY,COUPLET_POSITION_COLUMN_TITLE, COUPLET_COLUMN_TITLE, COUPLET_COLUMN_TITLE};
 
     private static final int DATABASE_VERSION = 1;
     private static final String COUPLETS_TABLE_NAME = "couplets";
@@ -50,33 +52,15 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     public <S extends Couplet> S save(S coupletToSave) {
         Long entityId = coupletToSave.getId();
         ContentValues values = new ContentValues();
-        values.put(COUPLET_COLUMN_TITLE, coupletToSave.getTitle());
-        values.put(COUPLET_COLUMN_AUTHOR_NAME, coupletToSave.getAuthor());
-        values.put(COUPLET_COLUMN_LYRICS, coupletToSave.getLyrics());
+        values.put(COUPLET_COLUMN_TITLE, coupletToSave.getImage());
+        values.put(COUPLET_COLUMN_AUTHOR_NAME, VersesDBSerializer.serializeVerses(coupletToSave.getVerses()));
         if (entityId == null) {
             long insertedRowId = getWritableDatabase().insert(COUPLETS_TABLE_NAME, null, values);
-            coupletToSave.setId((int) insertedRowId);
+            coupletToSave.setId(insertedRowId);
         } else {
             getWritableDatabase().update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(entityId)});
         }
         return coupletToSave;
-    }
-
-    private Couplet save(Couplet coupletToSave, SQLiteDatabase db) {
-        Long entityId = coupletToSave.getId();
-        Couplet savedCouplet;
-        ContentValues values = new ContentValues();
-        values.put(COUPLET_COLUMN_TITLE, coupletToSave.getTitle());
-        values.put(COUPLET_COLUMN_AUTHOR_NAME, coupletToSave.getAuthor());
-        values.put(COUPLET_COLUMN_LYRICS, coupletToSave.getLyrics());
-        if (entityId == null) {
-            long insertedRowId = db.insert(COUPLETS_TABLE_NAME, null, values);
-            savedCouplet = findOne((int) insertedRowId, db);
-        } else {
-            db.update(COUPLETS_TABLE_NAME, values, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(entityId)});
-            savedCouplet = coupletToSave;
-        }
-        return savedCouplet;
     }
 
     @Override
@@ -91,18 +75,6 @@ public class CoupletsDAO extends SQLiteOpenHelper implements CrudRepository<Coup
     @Override
     public Couplet findOne(Long key) {
         Cursor cursor = getReadableDatabase().query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
-        Couplet couplet;
-        if (cursor.moveToNext()) {
-            couplet = coupletRowMapper.mapRow(cursor);
-        } else {
-            couplet = null;
-        }
-        cursor.close();
-        return couplet;
-    }
-
-    private Couplet findOne(Long key, SQLiteDatabase readableDatabase) {
-        Cursor cursor = readableDatabase.query(COUPLETS_TABLE_NAME, COUPLET_TABLE_COLUMNS, COUPLET_COLUMN_KEY + " = ?", new String[]{Long.toString(key)}, null, null, null);
         Couplet couplet;
         if (cursor.moveToNext()) {
             couplet = coupletRowMapper.mapRow(cursor);
