@@ -48,7 +48,7 @@ public class SongDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            representedSong = songsService.findOne(getArguments().getInt(ARG_ITEM_ID));
+            representedSong = songsService.findOne(getArguments().getLong(ARG_ITEM_ID));
         }
     }
 
@@ -59,7 +59,7 @@ public class SongDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (representedSong != null) {
-            ((TextView) rootView.findViewById(R.id.song_detail)).setText(representedSong.getLyrics());
+            ((TextView) rootView.findViewById(R.id.song_detail)).setText(representedSong.getRawLyrics());
         }
 
         return rootView;

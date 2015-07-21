@@ -5,4 +5,5 @@
     <string name="hello_blank_fragment">artist</string>
     <string name="add_song">Import</string>
     <string name="export_song">Export</string>
+    <string name="generate_song">generate</string>
 </resources>

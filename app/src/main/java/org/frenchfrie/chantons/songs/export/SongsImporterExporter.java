@@ -1,4 +1,4 @@
-package org.frenchfrie.chantons.songs;
+package org.frenchfrie.chantons.songs.export;
 
 import android.net.Uri;
 import android.os.Environment;
@@ -9,6 +9,9 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.frenchfrie.chantons.songs.Song;
+import org.frenchfrie.chantons.songs.SongsDAO;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -18,11 +21,11 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.transform;
 
-public class SongsImporter {
+public class SongsImporterExporter {
 
     private SongsDAO songsDAO;
 
-    public SongsImporter(SongsDAO songsDAO) {
+    public SongsImporterExporter(SongsDAO songsDAO) {
         this.songsDAO = songsDAO;
     }
 
@@ -43,7 +46,7 @@ public class SongsImporter {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void exportSongs() throws IOException {
-        Log.d(SongsImporter.class.getName(), "Exporting all songs to file");
+        Log.d(SongsImporterExporter.class.getName(), "Exporting all songs to file");
         File songFile = new File(Environment.getExternalStorageDirectory(), "songs_export.json");
         if (!songFile.exists()) {
             songFile.createNewFile();
@@ -57,7 +60,7 @@ public class SongsImporter {
         } catch (JsonIOException jsonEx) {
             throw new IOException(jsonEx);
         }
-        Log.d(SongsImporter.class.getName(), "Successfully exported " + songsDTOs.size() + " songs");
+        Log.d(SongsImporterExporter.class.getName(), "Successfully exported " + songsDTOs.size() + " songs");
     }
 
 }

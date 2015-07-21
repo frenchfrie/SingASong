@@ -37,7 +37,7 @@ public class SongListFragment extends ListFragment {
 
     private SongsService songsService;
 
-    private Iterable<Song> songsDisplayed;
+    private List<Song> songsDisplayed;
 
     /**
      * The current activated item position. Only used on tablets.
@@ -163,16 +163,16 @@ public class SongListFragment extends ListFragment {
     }
 
     public static class OnSongSelected {
-        public final int songId;
+        public final long songId;
 
-        public OnSongSelected(int songId) {
+        public OnSongSelected(long songId) {
             this.songId = songId;
         }
     }
 
     public void itemSelected(SongListFragment.OnSongSelected songSelected) {
         Log.d(LOG_TAG, "Item selected");
-        int songId = songSelected.songId;
+        long songId = songSelected.songId;
         Intent detailIntent = new Intent(context, SongDetailActivity.class);
         detailIntent.putExtra(SongDetailFragment.ARG_ITEM_ID, songId);
         startActivity(detailIntent);

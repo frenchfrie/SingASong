@@ -13,4 +13,11 @@
         android:icon="@android:drawable/ic_menu_share"
         android:title="@string/export_song"
         singasong:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/generate_songs"
+        android:orderInCategory="3"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/generate_song"
+        singasong:showAsAction="ifRoom" />
+
 </menu>

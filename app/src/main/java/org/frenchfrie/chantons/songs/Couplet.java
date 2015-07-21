@@ -1,6 +1,20 @@
 package org.frenchfrie.chantons.songs;
 
-class Couplet {
+public class Couplet {
+
+    public Couplet() {
+    }
+
+    public Couplet(String image, String verses) {
+        this.image = image;
+        this.verses = verses;
+    }
+
+    public Couplet(Long id, String verses, String image) {
+        this.id = id;
+        this.verses = verses;
+        this.image = image;
+    }
 
     private Long id;
 

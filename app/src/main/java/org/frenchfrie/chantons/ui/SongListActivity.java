@@ -1,10 +1,6 @@
 package org.frenchfrie.chantons.ui;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +12,13 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import org.frenchfrie.chantons.R;
+import org.frenchfrie.chantons.songs.Couplet;
+import org.frenchfrie.chantons.songs.Song;
 import org.frenchfrie.chantons.songs.SongsService;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -69,6 +69,13 @@ public class SongListActivity extends FragmentActivity {
                         .setMessage("Error exporting file: " + e.getLocalizedMessage())
                         .show();
             }
+        } else if (item.getItemId() == R.id.generate_songs) {
+            SongsService songsService = SongsService.getSongsService(this);
+            List<Couplet> couplets = Arrays.asList(
+                    new Couplet("first couplet image", "first couplet verses"),
+                    new Couplet("second couplet image", "second couplet verses"));
+            songsService.save(new Song("my title", "my description", "my author", "my raw lyrics", couplets,
+                    new Couplet("my chorus image", "my chorus verses"), "my recording file name"));
         }
         return super.onMenuItemSelected(featureId, item);
     }

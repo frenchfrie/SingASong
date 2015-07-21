@@ -1,5 +1,6 @@
 package org.frenchfrie.chantons.songs;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 import org.frenchfrie.sql_support.RowMapper;
@@ -8,9 +9,9 @@ class SongRowMapper implements RowMapper<Song> {
 
     public static final String SONG_COLUMN_KEY = "id";
     public static final String SONG_COLUMN_TITLE = "title";
+    public static final String SONG_COLUMN_DESCRIPTION = "description";
     public static final String SONG_COLUMN_AUTHOR_NAME = "author_name";
     public static final String SONG_COLUMN_RAW_LYRICS = "raw_lyrics";
-    public static final String SONG_COLUMN_DESCRIPTION = "description";
     public static final String SONG_COLUMN_RECORDING = "recording";
 
     private CoupletsDAO coupletsDAO;
@@ -31,5 +32,14 @@ class SongRowMapper implements RowMapper<Song> {
         song.setCouplets(coupletsDAO.findSongCouplets(song.getId()));
         song.setChorus(coupletsDAO.findSongChorus(song.getId()));
         return song;
+    }
+
+
+    public ContentValues fillValues(Song songToSave, ContentValues values) {
+        if (values == null) values = new ContentValues();
+        values.put(SONG_COLUMN_TITLE, songToSave.getTitle());
+        values.put(SONG_COLUMN_AUTHOR_NAME, songToSave.getAuthor());
+        values.put(SONG_COLUMN_RAW_LYRICS, songToSave.getRawLyrics());
+        return values;
     }
 }
