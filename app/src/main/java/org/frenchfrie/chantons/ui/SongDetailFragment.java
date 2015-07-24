@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import org.frenchfrie.chantons.R;
+import org.frenchfrie.chantons.songs.Couplet;
 import org.frenchfrie.chantons.songs.Song;
-import org.frenchfrie.chantons.songs.SongsDAO;
 import org.frenchfrie.chantons.songs.SongsService;
+
+import java.util.List;
 
 /**
  * A fragment representing a single Song detail screen.
@@ -59,10 +60,29 @@ public class SongDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (representedSong != null) {
-            ((TextView) rootView.findViewById(R.id.song_detail)).setText(representedSong.getRawLyrics());
+            StringBuilder lyrics = getSongLyricsAsString(representedSong);
+            ((TextView) rootView.findViewById(R.id.song_detail)).setText(lyrics);
         }
-
         return rootView;
+    }
+
+    private static StringBuilder getSongLyricsAsString(Song representedSong) {
+        StringBuilder lyrics;
+        List<Couplet> couplets = representedSong.getCouplets();
+        if (couplets != null && !couplets.isEmpty()) {
+
+            lyrics = new StringBuilder(couplets.get(0).getVerses());
+            Couplet chorus = representedSong.getChorus();
+            if (chorus != null) {
+                lyrics.append("\n").append(chorus.getVerses());
+            }
+            for (int coupletId = 1; coupletId < couplets.size(); coupletId++) {
+                lyrics.append("\n").append(couplets.get(coupletId).getVerses());
+            }
+        } else {
+            lyrics = new StringBuilder(representedSong.getRawLyrics());
+        }
+        return lyrics;
     }
 
     @Override
