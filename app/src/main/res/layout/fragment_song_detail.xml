@@ -4,6 +4,8 @@
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:overScrollMode="ifContentScrolls"
     android:padding="16dp"
+    android:scrollbarTrackVertical="@style/AppTheme"
     android:textIsSelectable="true"
     tools:context=".SongDetailFragment" />

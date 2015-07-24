@@ -19,6 +19,15 @@ public class SongsService {
         return applicationSongsService;
     }
 
+    public SongsDAO getSongsDAO() {
+        return songsDAO;
+    }
+
+
+    public CoupletsDAO getCoupletsDAO() {
+        return songsDAO.getCoupletsDAO();
+    }
+
     private SongsDAO songsDAO;
 
     private SongsService(Context context) {

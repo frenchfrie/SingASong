@@ -42,6 +42,11 @@ public class SongsDAO extends SQLiteOpenHelper implements CrudRepository<Song, L
                     + SONG_COLUMN_RECORDING + " TEXT"
                     + ");";
     public static final String DATABASE_NAME = "main_db";
+
+    public CoupletsDAO getCoupletsDAO() {
+        return coupletsDAO;
+    }
+
     private final CoupletsDAO coupletsDAO;
 
     private SongRowMapper songRowMapper;
