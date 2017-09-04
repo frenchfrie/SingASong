@@ -23,6 +23,7 @@ import static com.google.common.collect.Lists.transform;
 
 public class SongsImporterExporter {
 
+    public static final String EXPORT_DIR = "SingASong";
     private SongsDAO songsDAO;
 
     public SongsImporterExporter(SongsDAO songsDAO) {
@@ -47,9 +48,15 @@ public class SongsImporterExporter {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void exportSongs() throws IOException {
         Log.d(SongsImporterExporter.class.getName(), "Exporting all songs to file");
-        File songFile = new File(Environment.getExternalStorageDirectory(), "songs_export.json");
+        File directory = getExportDir();
+        File songFile = new File(directory, "songs_export.json");
+
         if (!songFile.exists()) {
-            songFile.createNewFile();
+            try {
+                songFile.createNewFile();
+            } catch (SecurityException e) {
+                throw new IOException("Not authorized to write file");
+            }
         }
         SongToSongDTO converter = new SongToSongDTO();
         List<SongDTO> songsDTOs = transform(songsDAO.findAll(), converter);
@@ -63,4 +70,12 @@ public class SongsImporterExporter {
         Log.d(SongsImporterExporter.class.getName(), "Successfully exported " + songsDTOs.size() + " songs");
     }
 
+    private File getExportDir() throws IOException {
+        // Get the directory for the user's public pictures directory.
+        File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        if (!externalStoragePublicDirectory.mkdirs() || !externalStoragePublicDirectory.exists()) {
+            throw new IOException("Download directory does not exists");
+        }
+        return externalStoragePublicDirectory;
+    }
 }

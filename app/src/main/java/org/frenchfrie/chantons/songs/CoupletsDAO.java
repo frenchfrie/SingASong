@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import org.frenchfrie.sql_support.CrudRepository;
+import org.frenchfrie.data.CrudRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
 import static org.frenchfrie.chantons.songs.CoupletRowMapper.COUPLET_COLUMN_IMAGE;
 import static org.frenchfrie.chantons.songs.CoupletRowMapper.COUPLET_COLUMN_KEY;
 import static org.frenchfrie.chantons.songs.CoupletRowMapper.COUPLET_COLUMN_VERSES;
+import static org.frenchfrie.chantons.songs.SongContract.SongEntry.TABLE_NAME;
 import static org.frenchfrie.chantons.songs.SongRowMapper.SONG_COLUMN_KEY;
-import static org.frenchfrie.chantons.songs.SongsDAO.SONGS_TABLE_NAME;
 
 public class CoupletsDAO implements CrudRepository<Couplet, Long> {
 
@@ -36,7 +36,7 @@ public class CoupletsDAO implements CrudRepository<Couplet, Long> {
                     + COUPLET_COLUMN_POSITION + " INTEGER, "
                     + COUPLET_COLUMN_VERSES + " TEXT, "
                     + COUPLET_COLUMN_IMAGE + " TEXT, "
-                    + "FOREIGN KEY(" + COUPLET_COLUMN_SONG_KEY + ") REFERENCES " + SONGS_TABLE_NAME + "(" + SONG_COLUMN_KEY + ")" +
+                    + "FOREIGN KEY(" + COUPLET_COLUMN_SONG_KEY + ") REFERENCES " + TABLE_NAME + "(" + SONG_COLUMN_KEY + ")" +
                     ");";
     public static final int CHORUS_POSITION = 0;
 

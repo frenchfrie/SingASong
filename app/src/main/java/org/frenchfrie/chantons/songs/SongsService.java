@@ -1,14 +1,18 @@
 package org.frenchfrie.chantons.songs;
 
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 
 import org.frenchfrie.chantons.songs.export.SongsImporterExporter;
 
 import java.io.IOException;
 import java.util.List;
 
-public class SongsService {
+public class SongsService extends Service {
 
     private static SongsService applicationSongsService;
 
@@ -19,23 +23,18 @@ public class SongsService {
         return applicationSongsService;
     }
 
-    public SongsDAO getSongsDAO() {
-        return songsDAO;
-    }
-
-
-    public CoupletsDAO getCoupletsDAO() {
-        return songsDAO.getCoupletsDAO();
-    }
-
     private SongsDAO songsDAO;
 
     private SongsService(Context context) {
         songsDAO = new SongsDAO(context);
     }
 
-    private SongsService(SongsDAO songsDAO) {
-        this.songsDAO = songsDAO;
+    public SongsDAO getSongsDAO() {
+        return songsDAO;
+    }
+
+    public CoupletsDAO getCoupletsDAO() {
+        return songsDAO.getCoupletsDAO();
     }
 
     public Song findOne(Long key) {
@@ -50,12 +49,21 @@ public class SongsService {
         songsDAO.save(new SongsImporterExporter(songsDAO).importSongs(uri));
     }
 
-    public void save(Song song) {
-        songsDAO.save(song);
+    public Song save(Song song) {
+        return songsDAO.save(song);
+    }
+
+    public List<Song> save(Iterable<Song> songs) {
+        return songsDAO.save(songs);
     }
 
     public void exportToFile() throws IOException {
         new SongsImporterExporter(songsDAO).exportSongs();
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 }

@@ -6,19 +6,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import org.frenchfrie.chantons.R;
+import org.frenchfrie.chantons.TasksService;
 import org.frenchfrie.chantons.songs.Couplet;
 import org.frenchfrie.chantons.songs.Song;
 import org.frenchfrie.chantons.songs.SongsService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 
 /**
@@ -34,10 +38,6 @@ import java.util.List;
  * (if present) is a {@link SongDetailFragment}.
  */
 public class SongListActivity extends FragmentActivity {
-
-    private static final String LOG_TAG = "SongListActivity";
-
-    private FrameLayout songDetailContainer;
 
     public static final int REQUEST_CODE = 65436;
 
@@ -56,28 +56,71 @@ public class SongListActivity extends FragmentActivity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
-        if (item.getItemId() == R.id.add_song) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("file/*");
-            startActivityForResult(intent, REQUEST_CODE);
-        } else if (item.getItemId() == R.id.export_songs) {
-            SongsService songsService = SongsService.getSongsService(this);
-            try {
-                songsService.exportToFile();
-            } catch (IOException e) {
-                new AlertDialog.Builder(this)
-                        .setMessage("Error exporting file: " + e.getLocalizedMessage())
-                        .show();
-            }
-        } else if (item.getItemId() == R.id.generate_songs) {
-            SongsService songsService = SongsService.getSongsService(this);
-            List<Couplet> couplets = Arrays.asList(
-                    new Couplet("first couplet image", "first couplet verses"),
-                    new Couplet("second couplet image", "second couplet verses"));
-            songsService.save(new Song("my title", "my description", "my author", "my raw lyrics", couplets,
-                    new Couplet("my chorus image", "my chorus verses"), "my recording file name"));
+        if (super.onMenuItemSelected(featureId, item)) {
+            return true;
         }
-        return super.onMenuItemSelected(featureId, item);
+        switch (item.getItemId()) {
+            case R.id.add_song:
+                handleImport();
+                return true;
+            case R.id.export_songs:
+                handleExport();
+                return true;
+            case R.id.generate_songs:
+                handleSongGeneration();
+                return true;
+            case R.id.app_bar_search:
+                handleSearch();
+                return true;
+        }
+        return false;
+    }
+
+    private void handleImport() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("file/*");
+        startActivityForResult(intent, REQUEST_CODE);
+
+    }
+
+    private void handleExport() {
+        final SongsService songsService = SongsService.getSongsService(this);
+        TasksService.getInstance().submitTask(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    songsService.exportToFile();
+                    Toast.makeText(SongListActivity.this, "Export successful", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    Log.e(SongListActivity.class.getName(), "Error exporting file", e);
+                    Toast.makeText(SongListActivity.this, getString(R.string.export_error) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+                return null;
+            }
+        });
+    }
+
+    private void handleSongGeneration() {
+        TasksService.getInstance().submitTask(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                SongsService songsService = SongsService.getSongsService(SongListActivity.this);
+                List<Song> songsToSave = new ArrayList<>(100);
+                for (int i = 0; i < 100; i++) {
+                    List<Couplet> couplets = Arrays.asList(
+                            new Couplet("first couplet image", "first couplet verses"),
+                            new Couplet("second couplet image", "second couplet verses"));
+                    songsToSave.add(new Song("my title #" + i, "my description", "my author", "my raw lyrics", couplets,
+                            new Couplet("my chorus image", "my chorus verses"), "my recording file name"));
+                }
+                songsService.save(songsToSave);
+                return null;
+            }
+        });
+    }
+
+    private void handleSearch() {
+        Toast.makeText(this, "Helo search", Toast.LENGTH_SHORT).show();
     }
 
     @Override

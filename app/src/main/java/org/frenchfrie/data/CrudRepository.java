@@ -1,4 +1,4 @@
-package org.frenchfrie.sql_support;
+package org.frenchfrie.data;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Oliver Gierke
  * @author Eberhard Wolff
  */
-public interface CrudRepository<T, ID extends Serializable> extends Repository<T, ID> {
+public interface CrudRepository<T, ID extends Serializable> {
 
     /**
      * Saves a given entity. Use the returned instance for further operations as the save operation might have changed the

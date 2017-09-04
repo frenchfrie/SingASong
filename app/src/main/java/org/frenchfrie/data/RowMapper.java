@@ -1,4 +1,4 @@
-package org.frenchfrie.sql_support;
+package org.frenchfrie.data;
 
 import android.database.Cursor;
 

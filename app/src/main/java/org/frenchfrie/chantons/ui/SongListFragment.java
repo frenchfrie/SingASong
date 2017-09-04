@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -132,17 +133,16 @@ public class SongListFragment extends ListFragment {
 
     private static class SongListAdaptor extends ArrayAdapter<Song> {
 
-        private Context context;
         private LayoutInflater mInflater;
 
-        public SongListAdaptor(Context context, int resource, int textViewResourceId, List<Song> objects) {
+        SongListAdaptor(Context context, int resource, int textViewResourceId, List<Song> objects) {
             super(context, resource, textViewResourceId, objects);
-            this.context = context;
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View view;
 
             if (convertView == null) {
@@ -155,18 +155,11 @@ public class SongListFragment extends ListFragment {
             TextView authorText = (TextView) view.findViewById(R.id.line_two);
 
             Song song = getItem(position);
+            assert song != null;
             authorText.setText(song.getAuthor());
             titleText.setText(song.getTitle());
 
             return view;
-        }
-    }
-
-    public static class OnSongSelected {
-        public final long songId;
-
-        public OnSongSelected(long songId) {
-            this.songId = songId;
         }
     }
 
@@ -176,5 +169,13 @@ public class SongListFragment extends ListFragment {
         Intent detailIntent = new Intent(context, SongDetailActivity.class);
         detailIntent.putExtra(SongDetailFragment.ARG_ITEM_ID, songId);
         startActivity(detailIntent);
+    }
+
+    private static class OnSongSelected {
+        final long songId;
+
+        OnSongSelected(long songId) {
+            this.songId = songId;
+        }
     }
 }

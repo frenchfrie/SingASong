@@ -27,12 +27,6 @@
                 android:value=".ui.SongListActivity" />
         </activity>
 
-        <service
-            android:name=".songs.SongsService"
-            android:label="Song import service"
-            android:enabled="true"
-            android:exported="false" >
-        </service>
     </application>
 
 </manifest>

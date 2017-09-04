@@ -3,7 +3,7 @@ package org.frenchfrie.chantons.songs;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import org.frenchfrie.sql_support.RowMapper;
+import org.frenchfrie.data.RowMapper;
 
 class SongRowMapper implements RowMapper<Song> {
 
