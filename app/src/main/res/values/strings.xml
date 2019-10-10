@@ -7,4 +7,5 @@
     <string name="export_song">Export</string>
     <string name="generate_song">Generate</string>
     <string name="export_error">Error exporting file:</string>
+    <string name="action_settings">Settings</string>
 </resources>

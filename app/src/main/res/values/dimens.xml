@@ -120,4 +120,6 @@
     <!-- Color scheme dialog -->
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
 
+    <dimen name="fab_margin">16dp</dimen>
+
 </resources>
